@@ -2,11 +2,6 @@
 
 Sistema de simulação de filas G/G/n/k implementado em Java.
 
-## Pré-requisitos
-
-- Java 8 ou superior
-- Sistema operacional: Windows/Linux/macOS
-
 ## Como executar
 
 ### 1. Compilar o projeto
