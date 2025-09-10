@@ -1,105 +1,87 @@
-# Queue Simulator
+# Simulador de Rede de Filas
 
-Java implementation of a **G/G/n/k queue simulation system**.  
-This project is part of a practical assignment focused on simulating simple queues and analyzing their performance under different configurations.  
+## Descrição do Projeto
 
-## 📌 Overview
+Este projeto consiste no desenvolvimento de um simulador de redes de filas. A equipe tem a liberdade de escolher a linguagem de programação que julgar mais apropriada para a implementação.
 
-This simulator models **general arrival and service distributions** (`G/G/n/k`) with customizable parameters.  
-It allows you to experiment with **different queue settings** by defining the number of servers, queue capacity, and random arrival/service times within configurable ranges.
+É fundamental que as instruções de uso sejam claras e detalhadas, permitindo que qualquer pessoa possa compilar, executar e testar o simulador sem conhecimento prévio do seu funcionamento interno.
 
-The simulation produces statistical results such as:  
+## Instruções de Uso
 
-- Queue configuration (`G/G/servers/capacity`)  
-- Arrival and service time ranges  
-- State distribution table (time spent in each state and corresponding probabilities)  
-- Number of clients lost due to queue capacity limits  
-- Total simulation time  
+Para fins de teste e comparação de resultados, utilize o simulador de rede de filas disponibilizado no módulo 3. Em caso de dúvidas sobre a especificação e os requisitos desta etapa, consulte o texto multimodal do módulo de aprendizagem.
 
-## 🚀 How to Run
+## Cenário de Simulação para Validação
 
-### 1. Compile the project
-```bash
-javac Main.java
-```
+Para validar o simulador, você deve entregar, além do código-fonte, o resultado da simulação da seguinte rede de filas:
 
-### 2. Run the simulation
-```bash
-java Main run modelo.yml
-```
+  * **Fila 1:**
 
-## ⚙️ Configuration File
+      * **Tipo:** G/G/2/3
+      * **Chegadas:** Intervalo entre 1 e 4 unidades de tempo.
+      * **Atendimento:** Intervalo entre 3 e 4 unidades de tempo.
 
-The simulator uses a YAML file (`modelo.yml`) to define queue parameters:
+  * **Fila 2:**
 
-- `servers`: Number of servers in the system  
-- `capacity`: Maximum number of clients allowed in the queue (including those being served)  
-- `minArrival` / `maxArrival`: Minimum and maximum inter-arrival times  
-- `minService` / `maxService`: Minimum and maximum service times  
+      * **Tipo:** G/G/1/5
+      * **Atendimento:** Intervalo entre 2 e 3 unidades de tempo.
+      * **Chegadas:** Esta fila não recebe clientes do exterior. 100% dos clientes que concluem o serviço na Fila 1 são direcionados para a Fila 2 (configuração em tandem).
 
-### Example `modelo.yml`
-```yaml
-!PARAMETERS
+### Parâmetros da Simulação
 
-rndnumbersPerSeed: 100000
-seeds:
-- 41
+  * **Estado Inicial:** As filas iniciam vazias.
+  * **Primeira Chegada:** O primeiro cliente chega ao sistema no tempo `1,5`.
+  * **Duração da Simulação:** A simulação deve ser executada até que `100.000` números aleatórios tenham sido utilizados e então deve ser encerrada.
 
-arrivals: 
-   Queue1: 2.0
+### Resultados a Serem Apresentados
 
-queues: 
-   Queue1: 
-      servers: 2
-      capacity: 5
-      minArrival: 2.0
-      maxArrival: 5.0
-      minService: 3.0
-      maxService: 5.0
-```
+Ao final da simulação, os seguintes dados devem ser reportados:
 
-## 📊 Example Output
+  * A distribuição de probabilidades dos estados de cada fila.
+  * Os tempos acumulados para cada estado em cada fila.
+  * O número de perdas de clientes (se houver) em cada fila.
+  * O tempo global (total) da simulação.
 
-```
-*********************************************************
-Queue:   Queue1 (G/G/1/5)
-Arrival: 2.0 ... 5.0
-Service: 3.0 ... 5.0
-*********************************************************
-   State               Time          Probability
-      0             3.9046                0.00%
-      1            27.2276                0.03%
-      2           108.6892                0.13%
-      3          7419.7764                3.97%
-      4         98430.3752               52.72%
-      5         80569.8635               43.15%
+## Como Executar
 
-Number of losses: 6685
-```
+Este projeto utiliza a biblioteca **SnakeYAML** para processar o arquivo de configuração.
 
-## 📂 Project Structure
+### 1\. Pré-requisitos
 
-```
-M4_SMA/
-├── Main.java      # Main simulation code
-├── modelo.yml     # Queue configuration file
-└── README.md      # This documentation
-```
+  * **JDK (Java Development Kit)** instalado e configurado no sistema.
+  * O arquivo `snakeyaml-2.2.jar` deve estar localizado no mesmo diretório que o arquivo `Main.java`. Você pode fazer o download [aqui](https://www.google.com/search?q=https://repo1.maven.org/maven2/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar).
 
----
+### 2\. Compile o Projeto
 
-## 🎯 Assignment Context
+Para compilar, é necessário incluir a biblioteca externa no classpath.
 
-For validation purposes, besides the source code, you must also deliver the **simulation results** for the following queues:
+  * **Para Windows:**
 
-- `G/G/1/5`, arrivals in [2, 5], service in [3, 5]  
-- `G/G/2/5`, arrivals in [2, 5], service in [3, 5]  
+    ```bash
+    javac -cp ".;snakeyaml-2.2.jar" Main.java
+    ```
 
-Simulation requirements:
-- Start with an **empty queue** and the **first customer arriving at time 2.0**  
-- Run the simulation with **100,000 random numbers**  
-- Report:  
-  - Probability distribution of queue states  
-  - Accumulated times per state  
-  - Number of lost customers (if any)  
-  - Total simulation time  
+  * **Para Linux/macOS:**
+
+    ```bash
+    javac -cp ".:snakeyaml-2.2.jar" Main.java
+    ```
+
+### 3\. Execute a Simulação
+
+Da mesma forma, a execução requer a especificação do classpath.
+
+  * **Para Windows:**
+
+    ```bash
+    java -cp ".;snakeyaml-2.2.jar" Main run modelo.yml
+    ```
+
+  * **Para Linux/macOS:**
+
+    ```bash
+    java -cp ".:snakeyaml-2.2.jar" Main run modelo.yml
+    ```
+
+## Arquivo de Configuração
+
+O simulador é configurado através de um arquivo YAML (`modelo.yml`), que define a estrutura da rede de filas e todos os parâmetros necessários para a simulação.
