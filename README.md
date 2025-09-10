@@ -1,161 +1,87 @@
-Simulador de Rede de Filas
-Implementação em Java de um sistema de simulação de redes de filas G/G/n/k.
-Este projeto evoluiu de um simulador de fila única para um sistema mais robusto, capaz de modelar redes de filas, como filas em tandem. Ele faz parte de um trabalho prático focado na simulação e análise de desempenho de sistemas de enfileiramento.
+# Simulador de Rede de Filas
 
-Visão Geral
-Este simulador modela uma rede de filas onde as chegadas e os tempos de serviço seguem distribuições gerais (G/G/n/k). Ele permite que você defina uma topologia de rede e experimente diferentes configurações de fila, ajustando o número de servidores, capacidade e tempos de serviço para cada fila, bem como o processo de chegada para todo o sistema.
+## Descrição do Projeto
 
-A simulação produz resultados estatísticos detalhados para cada fila na rede, tais como:
+Este projeto consiste no desenvolvimento de um simulador de redes de filas. A equipe tem a liberdade de escolher a linguagem de programação que julgar mais apropriada para a implementação.
 
-Configuração da fila (G/G/servidores/capacidade)
+É fundamental que as instruções de uso sejam claras e detalhadas, permitindo que qualquer pessoa possa compilar, executar e testar o simulador sem conhecimento prévio do seu funcionamento interno.
 
-Intervalos de tempo de chegada e de serviço
+## Instruções de Uso
 
-Tabela de distribuição de estados (tempo gasto em cada estado e suas probabilidades)
+Para fins de teste e comparação de resultados, utilize o simulador de rede de filas disponibilizado no módulo 3. Em caso de dúvidas sobre a especificação e os requisitos desta etapa, consulte o texto multimodal do módulo de aprendizagem.
 
-Número de clientes perdidos devido à capacidade da fila
+## Cenário de Simulação para Validação
 
-Tempo total de simulação da rede
+Para validar o simulador, você deve entregar, além do código-fonte, o resultado da simulação da seguinte rede de filas:
 
-Como Executar
-Este projeto requer a biblioteca SnakeYAML para analisar o arquivo de configuração.
+  * **Fila 1:**
 
-1. Pré-requisitos
-JDK (Java Development Kit) instalado e configurado.
+      * **Tipo:** G/G/2/3
+      * **Chegadas:** Intervalo entre 1 e 4 unidades de tempo.
+      * **Atendimento:** Intervalo entre 3 e 4 unidades de tempo.
 
-O arquivo snakeyaml-2.2.jar deve estar no mesmo diretório que o Main.java. Você pode baixá-lo aqui.
+  * **Fila 2:**
 
-2. Compile o projeto
-Devido à biblioteca externa, você deve incluí-la no classpath durante a compilação.
+      * **Tipo:** G/G/1/5
+      * **Atendimento:** Intervalo entre 2 e 3 unidades de tempo.
+      * **Chegadas:** Esta fila não recebe clientes do exterior. 100% dos clientes que concluem o serviço na Fila 1 são direcionados para a Fila 2 (configuração em tandem).
 
-Bash
+### Parâmetros da Simulação
 
-# Para Windows
-javac -cp ".;snakeyaml-2.2.jar" Main.java
+  * **Estado Inicial:** As filas iniciam vazias.
+  * **Primeira Chegada:** O primeiro cliente chega ao sistema no tempo `1,5`.
+  * **Duração da Simulação:** A simulação deve ser executada até que `100.000` números aleatórios tenham sido utilizados e então deve ser encerrada.
 
-# Para Linux/macOS
-javac -cp ".:snakeyaml-2.2.jar" Main.java
+### Resultados a Serem Apresentados
 
-3. Execute a simulação
-Da mesma forma, o classpath é necessário para a execução.
+Ao final da simulação, os seguintes dados devem ser reportados:
 
+  * A distribuição de probabilidades dos estados de cada fila.
+  * Os tempos acumulados para cada estado em cada fila.
+  * O número de perdas de clientes (se houver) em cada fila.
+  * O tempo global (total) da simulação.
 
+## Como Executar
 
-# Para Windows
-java -cp ".;snakeyaml-2.2.jar" Main run modelo.yml
+Este projeto utiliza a biblioteca **SnakeYAML** para processar o arquivo de configuração.
 
-# Para Linux/macOS
-java -cp ".:snakeyaml-2.2.jar" Main run modelo.yml
-Arquivo de Configuração
-O simulador usa um arquivo YAML (modelo.yml) para definir a rede e os parâmetros da simulação.
+### 1\. Pré-requisitos
 
-parameters: Configurações globais da simulação.
+  * **JDK (Java Development Kit)** instalado e configurado no sistema.
+  * O arquivo `snakeyaml-2.2.jar` deve estar localizado no mesmo diretório que o arquivo `Main.java`. Você pode fazer o download [aqui](https://www.google.com/search?q=https://repo1.maven.org/maven2/org/yaml/snakeyaml/2.2/snakeyaml-2.2.jar).
 
-rndnumbersPerSeed: O número de aleatórios a serem gerados, o que efetivamente limita a duração da simulação.
+### 2\. Compile o Projeto
 
-seeds: Uma lista de sementes aleatórias para executar as simulações.
+Para compilar, é necessário incluir a biblioteca externa no classpath.
 
-queues: Um dicionário que define cada fila na rede.
+  * **Para Windows:**
 
-id: Um ID numérico, único e sequencial, começando em 0. A fila com id: 0 é o ponto de entrada para chegadas externas.
+    ```bash
+    javac -cp ".;snakeyaml-2.2.jar" Main.java
+    ```
 
-servers, capacity, minService, maxService: Os parâmetros específicos para aquela fila.
+  * **Para Linux/macOS:**
 
-minArrival, maxArrival: O intervalo de tempo entre chegadas de clientes que entram na rede (usado apenas para a fila com id: 0).
+    ```bash
+    javac -cp ".:snakeyaml-2.2.jar" Main.java
+    ```
 
-routing: Define a probabilidade de um cliente se mover de uma fila para outra.
+### 3\. Execute a Simulação
 
-Exemplo de modelo.yml para Filas em Tandem
-YAML
+Da mesma forma, a execução requer a especificação do classpath.
 
-parameters:
-  # O número de aleatórios a serem gerados
-  rndnumbersPerSeed: 100000
-  # Lista de sementes para executar as simulações
-  seeds:
-    - 41
+  * **Para Windows:**
 
-queues: 
-  Queue1: 
-    id: 0
-    servers: 2
-    capacity: 3
-    minArrival: 1.0
-    maxArrival: 4.0
-    minService: 3.0
-    maxService: 4.0
-  Queue2: 
-    id: 1
-    servers: 1
-    capacity: 5
-    minArrival: 0 # Ignorado, pois não é a fila de entrada
-    maxArrival: 0 # Ignorado
-    minService: 2.0
-    maxService: 3.0
+    ```bash
+    java -cp ".;snakeyaml-2.2.jar" Main run modelo.yml
+    ```
 
-routing:
-  # Da fila de origem...
-  Queue1:
-    # ...para a fila de destino: probabilidade
-    Queue2: 1.0 # 100% dos clientes da Fila 1 vão para a Fila 2
-Exemplo de Saída
------------ EXECUTANDO SIMULAÇÃO COM SEED: 41 -----------
+  * **Para Linux/macOS:**
 
-Relatório Final da Simulação
-=========================================================
-**************** Fila Queue1 (G/G/2/3) ****************
-Service Time: 3.0 ... 4.0
----------------------------------------------------------
- State                  Time        Probability
-     0             2611.3837              11.83%
-     1             4837.2831              21.92%
-     2             7859.3907              35.61%
-     3             6762.3832              30.64%
-Perdas de clientes: 7176
-*********************************************************
+    ```bash
+    java -cp ".:snakeyaml-2.2.jar" Main run modelo.yml
+    ```
 
-**************** Fila Queue2 (G/G/1/5) ****************
-Service Time: 2.0 ... 3.0
----------------------------------------------------------
- State                  Time        Probability
-     0              265.5901               1.20%
-     1             2356.5511              10.68%
-     2             4082.9095              18.50%
-     3             5090.8711              23.07%
-     4             5446.8839              24.68%
-     5             4827.6350              21.87%
-Perdas de clientes: 111
-*********************************************************
+## Arquivo de Configuração
 
-Tempo global da simulação: 22070.4406
-=========================================================
-Estrutura do Projeto
-queue-simulator/
-├── Main.java               # Código principal da simulação
-├── modelo.yml              # Arquivo de configuração da rede
-├── snakeyaml-2.2.jar       # Biblioteca necessária
-└── README.md               # Esta documentação
-Contexto do Trabalho
-Para validação, os resultados da simulação para a seguinte rede de filas em tandem devem ser entregues:
-
-Fila 1: G/G/2/3, com chegadas entre [1, 4] e serviço entre [3, 4].
-
-Fila 2: G/G/1/5, com serviço entre [2, 3].
-
-Roteamento: 100% dos clientes que concluem o serviço na Fila 1 seguem para a Fila 2.
-
-Requisitos da simulação:
-
-Começar com as filas vazias e o primeiro cliente chegando no instante 1.5.
-
-Executar a simulação com 100.000 números aleatórios usando a semente 41.
-
-Relatar para cada fila:
-
-Distribuição de probabilidade dos estados.
-
-Tempo acumulado por estado.
-
-Número de clientes perdidos.
-
-Relatar o tempo total da simulação.
+O simulador é configurado através de um arquivo YAML (`modelo.yml`), que define a estrutura da rede de filas e todos os parâmetros necessários para a simulação.
